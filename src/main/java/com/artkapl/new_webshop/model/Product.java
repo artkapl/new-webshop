@@ -11,17 +11,16 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
 @Entity
 public class Product {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -37,5 +36,15 @@ public class Product {
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Image> images;
+
+    // Constructor for creating products from API
+    public Product(String name, String manufacturer, String description, BigDecimal price, int inventory, Category category) {
+        this.name = name;
+        this.manufacturer = manufacturer;
+        this.description = description;
+        this.price = price;
+        this.inventory = inventory;
+        this.category = category;
+    }
 
 }
