@@ -1,4 +1,4 @@
-package com.artkapl.new_webshop.exceptions;
+package com.artkapl.new_webshop.exception;
 
 public class ProductNotFoundException extends RuntimeException {
 
