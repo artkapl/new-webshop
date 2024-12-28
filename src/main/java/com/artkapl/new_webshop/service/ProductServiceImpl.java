@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
-import com.artkapl.new_webshop.exception.ProductNotFoundException;
+import com.artkapl.new_webshop.exception.NotFoundException;
 import com.artkapl.new_webshop.model.Category;
 import com.artkapl.new_webshop.model.Product;
 import com.artkapl.new_webshop.repository.CategoryRepository;
@@ -52,8 +52,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product getProduct(Long id) {
-        return productRepository.findById(id).orElseThrow(() -> new ProductNotFoundException("Product not found"));
+    public Product getProductById(Long id) {
+        return productRepository.findById(id).orElseThrow(() -> new NotFoundException("Product not found!"));
     }
 
     @Override
@@ -65,7 +65,7 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.findById(productId)
             .map(existingProduct -> updateExistingProduct(existingProduct, request))
             .map(productRepository::save)
-            .orElseThrow(() -> new ProductNotFoundException("Product not found"));
+            .orElseThrow(() -> new NotFoundException("Product not found!"));
 
     }
 
@@ -88,7 +88,7 @@ public class ProductServiceImpl implements ProductService {
     public void deleteProduct(Long id) {
         productRepository.findById(id)
             .ifPresentOrElse(productRepository::delete, 
-                () -> {throw new ProductNotFoundException("Product not found");});
+                () -> {throw new NotFoundException("Product not found!");});
     }
 
     @Override

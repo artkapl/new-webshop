@@ -8,7 +8,7 @@ import com.artkapl.new_webshop.request.ProductUpdateRequest;
 
 public interface ProductService {
     Product createProduct(ProductCreateRequest request);
-    Product getProduct(Long id);
+    Product getProductById(Long id);
     Product updateProduct(ProductUpdateRequest request, Long productId);
     void deleteProduct(Long id);
     List<Product> getAllProducts();
