@@ -29,7 +29,9 @@ public class ProductServiceImpl implements ProductService {
             // Case: No --> Save as new Category in DB (and set as product category)
             Category category = Optional.ofNullable(categoryRepository.findByName(request.getCategory().getName()))
                 .orElseGet(() -> {
-                    Category newCategory = new Category(request.getCategory().getName());
+                    Category newCategory = new Category(
+                        request.getCategory().getName(), 
+                        request.getCategory().getDescription());
                     return categoryRepository.save(newCategory);
                 });
             request.setCategory(category);
@@ -46,7 +48,7 @@ public class ProductServiceImpl implements ProductService {
             request.getPrice(),
             request.getInventory(),
             category
-        )
+        );
     }
 
     @Override
