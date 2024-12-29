@@ -1,0 +1,5 @@
+{"properties": [{
+  "name": "api.url.prefix",
+  "type": "java.lang.String",
+  "description": "A standard API prefix URL for every controller route."
+}]}

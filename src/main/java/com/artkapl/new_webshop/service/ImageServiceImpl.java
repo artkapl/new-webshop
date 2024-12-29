@@ -84,7 +84,7 @@ public class ImageServiceImpl implements ImageService {
 
     private Image createImage(MultipartFile file) throws SerialException, SQLException, IOException {
         Image image = new Image();
-        image.setFileName(file.getName());
+        image.setFileName(file.getOriginalFilename());
         image.setFileType(file.getContentType());
         image.setImageData(new SerialBlob(file.getBytes()));
         return image;
