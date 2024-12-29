@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.artkapl.dto.ImageDto;
+import com.artkapl.new_webshop.dto.ImageDto;
 import com.artkapl.new_webshop.exception.NotFoundException;
 import com.artkapl.new_webshop.model.Image;
 import com.artkapl.new_webshop.model.Product;

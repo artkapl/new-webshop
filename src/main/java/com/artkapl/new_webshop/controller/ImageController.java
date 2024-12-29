@@ -1,4 +1,4 @@
-package com.artkapl.controller;
+package com.artkapl.new_webshop.controller;
 
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.artkapl.dto.ImageDto;
+import com.artkapl.new_webshop.dto.ImageDto;
 import com.artkapl.new_webshop.exception.NotFoundException;
 import com.artkapl.new_webshop.model.Image;
 import com.artkapl.new_webshop.service.ImageService;
@@ -33,7 +33,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 @RestController
-@RequestMapping("${api.prefix.url}/images")
+@RequestMapping("${api.url.prefix}/images")
 public class ImageController {
 
     @Autowired

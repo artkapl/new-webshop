@@ -1,4 +1,4 @@
-package com.artkapl.dto;
+package com.artkapl.new_webshop.dto;
 
 import lombok.Data;
 

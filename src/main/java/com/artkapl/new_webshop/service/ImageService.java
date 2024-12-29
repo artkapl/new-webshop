@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
-import com.artkapl.dto.ImageDto;
+import com.artkapl.new_webshop.dto.ImageDto;
 import com.artkapl.new_webshop.model.Image;
 
 public interface ImageService {
