@@ -3,6 +3,7 @@ package com.artkapl.new_webshop.service;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.artkapl.new_webshop.exception.NotFoundException;
@@ -13,32 +14,32 @@ import com.artkapl.new_webshop.repository.ProductRepository;
 import com.artkapl.new_webshop.request.ProductCreateRequest;
 import com.artkapl.new_webshop.request.ProductUpdateRequest;
 
-import lombok.RequiredArgsConstructor;
-
 @Service
-@RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
 
-        private final ProductRepository productRepository;
-        private final CategoryRepository categoryRepository;
-    
-        @Override
-        public Product createProduct(ProductCreateRequest request) {
-            // Check if category is already in DB
-            // Case: Yes --> set as product category
-            // Case: No --> Save as new Category in DB (and set as product category)
-            Category category = Optional.ofNullable(categoryRepository.findByName(request.getCategory().getName()))
-                .orElseGet(() -> {
-                    Category newCategory = new Category(
-                        request.getCategory().getName(), 
-                        request.getCategory().getDescription());
-                    return categoryRepository.save(newCategory);
-                });
-            request.setCategory(category);
-            
-            // Create Product with category in DB
-            return productRepository.save(createProductWithCategory(request, category));
-    }
+    @Autowired
+    private ProductRepository productRepository;
+
+    @Autowired
+    private CategoryRepository categoryRepository;
+
+    @Override
+    public Product createProduct(ProductCreateRequest request) {
+        // Check if category is already in DB
+        // Case: Yes --> set as product category
+        // Case: No --> Save as new Category in DB (and set as product category)
+        Category category = Optional.ofNullable(categoryRepository.findByName(request.getCategory().getName()))
+            .orElseGet(() -> {
+                Category newCategory = new Category(
+                    request.getCategory().getName(), 
+                    request.getCategory().getDescription());
+                return categoryRepository.save(newCategory);
+            });
+        request.setCategory(category);
+        
+        // Create Product with category in DB
+        return productRepository.save(createProductWithCategory(request, category));
+}
 
     private Product createProductWithCategory(ProductCreateRequest request, Category category) {
         return new Product(

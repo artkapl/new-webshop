@@ -2,6 +2,7 @@ package com.artkapl.new_webshop.service;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.artkapl.new_webshop.exception.AlreadyExistsException;
@@ -9,13 +10,11 @@ import com.artkapl.new_webshop.exception.NotFoundException;
 import com.artkapl.new_webshop.model.Category;
 import com.artkapl.new_webshop.repository.CategoryRepository;
 
-import lombok.RequiredArgsConstructor;
-
 @Service
-@RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
 
-    private final CategoryRepository categoryRepository;
+    @Autowired
+    private CategoryRepository categoryRepository;
 
     @Override
     public Category getCategoryById(Long categoryId) {

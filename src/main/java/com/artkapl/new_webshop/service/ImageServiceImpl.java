@@ -8,6 +8,7 @@ import java.util.List;
 import javax.sql.rowset.serial.SerialBlob;
 import javax.sql.rowset.serial.SerialException;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,14 +18,15 @@ import com.artkapl.new_webshop.model.Image;
 import com.artkapl.new_webshop.model.Product;
 import com.artkapl.new_webshop.repository.ImageRepository;
 
-import lombok.RequiredArgsConstructor;
-
 @Service
-@RequiredArgsConstructor
 public class ImageServiceImpl implements ImageService {
 
-    private final ImageRepository imageRepository;
-    private final ProductService productService;
+    @Autowired
+    private ImageRepository imageRepository;
+
+    @Autowired
+    private ProductService productService;
+
     private static final String IMAGE_URL_PATH = "/api/v1/images/download/";
 
     @Override
