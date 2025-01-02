@@ -2,7 +2,6 @@ package com.artkapl.new_webshop.controller;
 
 import static org.springframework.http.HttpStatus.CONFLICT;
 import static org.springframework.http.HttpStatus.CREATED;
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 import java.util.List;
@@ -43,10 +42,10 @@ public class CategoryController {
         }
     }
 
-    @GetMapping("/{categoryId}")
-    public ResponseEntity<ApiResponse> getCategory(@PathVariable Long categoryId) {
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse> getCategory(@PathVariable Long id) {
         try {
-            Category category = categoryService.getCategoryById(categoryId);
+            Category category = categoryService.getCategoryById(id);
             return ResponseEntity.ok(new ApiResponse("Success", category));
         } catch (NotFoundException e) {
             return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
@@ -54,6 +53,19 @@ public class CategoryController {
             return ControllerTools.getInternalErrorResponse(e);
         }
     }
+
+    @GetMapping("/{name}")
+    public ResponseEntity<ApiResponse> getCategoryByName(@PathVariable String name) {
+        try {
+            Category category = categoryService.getCategoryByName(name);
+            return ResponseEntity.ok(new ApiResponse("Success", category));
+        } catch (NotFoundException e) {
+            return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(), NOT_FOUND));
+        } catch (Exception e) {
+            return ControllerTools.getInternalErrorResponse(e);
+        }
+    }
+    
 
     @PostMapping
     public ResponseEntity<ApiResponse> addCategory(@RequestBody Category category) {
