@@ -5,6 +5,7 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.ResourceBundle.Control;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -45,9 +46,8 @@ public class ImageController {
             List<ImageDto> imageDtos = imageService.saveImages(files, productId);
             return ResponseEntity.ok(new ApiResponse("Image(s) saved!", imageDtos));
         } catch (Exception e) {
-            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse("Image upload failed! Please contact your administrator.", e.getMessage()));
+            return ControllerTools.getInternalErrorResponse(e);
         }
-
     }
 
     @GetMapping("/{imageId}")
@@ -63,29 +63,25 @@ public class ImageController {
     @PutMapping("/{imageId}")
     public ResponseEntity<ApiResponse> updateImage(@PathVariable Long imageId, @RequestBody MultipartFile file) {
         try {
-            Image image = imageService.getImageById(imageId);
-            if (image != null) {
-                imageService.updateImage(file, imageId);
-                return ResponseEntity.ok(new ApiResponse("Image updated!", null));
-            }
+            imageService.updateImage(file, imageId);
+            return ResponseEntity.ok(new ApiResponse("Image updated!", null));
         } catch (NotFoundException e) {
             return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
+        } catch (Exception e) {
+            return ControllerTools.getInternalErrorResponse(e);
         }
-        return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse("Something went wrong: image update failed!", INTERNAL_SERVER_ERROR));
     }
 
     @DeleteMapping("/{imageId}")
     public ResponseEntity<ApiResponse> deleteImage(@PathVariable Long imageId) {
         try {
-            Image image = imageService.getImageById(imageId);
-            if (image != null) {
-                imageService.deleteImage(imageId);
-                return ResponseEntity.ok(new ApiResponse("Image deleted!", null));
-            }
+            imageService.deleteImage(imageId);
+            return ResponseEntity.ok(new ApiResponse("Image deleted!", null));
         } catch (NotFoundException e) {
             return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
+        } catch (Exception e) {
+            return ControllerTools.getInternalErrorResponse(e);
         }
-        return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse("Something went wrong: image removal failed!", INTERNAL_SERVER_ERROR));
     }
 
 }
