@@ -38,6 +38,10 @@ public class ProductController {
     public ResponseEntity<ApiResponse> getAllProducts() {
         try {
             List<Product> products = productService.getAllProducts();
+
+            if (products.isEmpty()) {
+                return ResponseEntity.status(NOT_FOUND).body(new ApiResponse("No products found!", null));
+            }
             return ResponseEntity.ok(new ApiResponse("Success!", products));
         } catch (Exception e) {
             return ControllerTools.getInternalErrorResponse(e);
@@ -50,6 +54,10 @@ public class ProductController {
         @RequestParam(defaultValue = "25") int size) {
         try {
             Page<Product> products = productService.getPaginatedProducts(page, size);
+
+            if (products.isEmpty()) {
+                return ResponseEntity.status(NOT_FOUND).body(new ApiResponse("No products found!", null));
+            }
             return ResponseEntity.ok(new ApiResponse("Success!", products));
         } catch (Exception e) {
             return ControllerTools.getInternalErrorResponse(e);
@@ -72,6 +80,10 @@ public class ProductController {
     public ResponseEntity<ApiResponse> getProductsByCategory(@PathVariable String categoryName) {
         try {
             List<Product> products = productService.getProductsByCategory(categoryName);
+
+            if (products.isEmpty()) {
+                return ResponseEntity.status(NOT_FOUND).body(new ApiResponse("No products found!", null));
+            }
             return ResponseEntity.ok(new ApiResponse("Success!", products));
         } catch (Exception e) {
             return ControllerTools.getInternalErrorResponse(e);
@@ -82,6 +94,10 @@ public class ProductController {
     public ResponseEntity<ApiResponse> getProductsByManufacturer(@PathVariable String manufacturerName) {
         try {
             List<Product> products = productService.getProductsByManufacturer(manufacturerName);
+
+            if (products.isEmpty()) {
+                return ResponseEntity.status(NOT_FOUND).body(new ApiResponse("No products found!", null));
+            }
             return ResponseEntity.ok(new ApiResponse("Success!", products));
         } catch (Exception e) {
             return ControllerTools.getInternalErrorResponse(e);
