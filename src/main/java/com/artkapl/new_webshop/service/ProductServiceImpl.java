@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.artkapl.new_webshop.exception.NotFoundException;
@@ -89,12 +92,20 @@ public class ProductServiceImpl implements ProductService {
     public void deleteProduct(Long id) {
         productRepository.findById(id)
             .ifPresentOrElse(productRepository::delete, 
-                () -> {throw new NotFoundException("Product not found!");});
+                () -> {
+                    throw new NotFoundException("Product not found!");
+                });
     }
 
     @Override
     public List<Product> getAllProducts() {
         return productRepository.findAll();
+    }
+
+    @Override
+    public Page<Product> getPaginatedProducts(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return productRepository.findAll(pageable);
     }
 
     @Override
@@ -116,7 +127,4 @@ public class ProductServiceImpl implements ProductService {
     public Long countByManufacturerAndName(String manufacturer, String name) {
         return productRepository.countByManufacturerAndName(manufacturer, name);
     }
-
-    
-
 }
