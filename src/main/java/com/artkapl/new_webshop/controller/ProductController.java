@@ -103,7 +103,6 @@ public class ProductController {
             return ControllerTools.getInternalErrorResponse(e);
         }
     }
-    
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse> deleteProduct(@PathVariable Long id) {

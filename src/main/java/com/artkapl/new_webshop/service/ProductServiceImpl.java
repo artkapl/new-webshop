@@ -122,9 +122,4 @@ public class ProductServiceImpl implements ProductService {
     public List<Product> getProductsByName(String productName) {
         return productRepository.findByName(productName);
     }
-
-    @Override
-    public Long countByManufacturerAndName(String manufacturer, String name) {
-        return productRepository.countByManufacturerAndName(manufacturer, name);
-    }
 }
