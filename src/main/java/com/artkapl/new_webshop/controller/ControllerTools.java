@@ -9,7 +9,7 @@ import com.artkapl.response.ApiResponse;
 public class ControllerTools {
 
     public static ResponseEntity<ApiResponse> getInternalErrorResponse(Exception e) {
-        return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(), INTERNAL_SERVER_ERROR));
+        return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse("An error occurred!", e.getMessage()));
     }
 
 }
