@@ -35,7 +35,7 @@ public class CategoryController {
     @Autowired
     private CategoryService categoryService;
 
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<ApiResponse> getAllCategories() {
         try {
             List<Category> categories = categoryService.getAllCategories();
