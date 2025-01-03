@@ -1,11 +1,9 @@
 package com.artkapl.new_webshop.controller;
 
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 import java.sql.SQLException;
 import java.util.List;
-import java.util.ResourceBundle.Control;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
