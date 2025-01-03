@@ -39,7 +39,7 @@ public class ProductServiceImpl implements ProductService {
                 return categoryRepository.save(newCategory);
             });
         request.setCategory(category);
-        
+
         // Create Product with category in DB
         return productRepository.save(createProductWithCategory(request, category));
 }

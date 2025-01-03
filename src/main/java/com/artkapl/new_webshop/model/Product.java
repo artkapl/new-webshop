@@ -3,6 +3,8 @@ package com.artkapl.new_webshop.model;
 import java.math.BigDecimal;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -39,10 +41,11 @@ public class Product {
 
     private int inventory;  // Quantity in Stock
 
-    @ManyToOne(cascade = CascadeType.PERSIST)  // Do not remove categories when products are removed
+    @ManyToOne
     @JoinColumn(name = "category_id", nullable = true)
     private Category category;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Image> images;
 
