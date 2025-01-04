@@ -10,9 +10,9 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     List<Product> findByCategoryName(String category);
 
-    List<Product> findByManufacturer(String manufacturer);
+    List<Product> findByManufacturerIgnoreCaseContaining(String manufacturer);
 
-    List<Product> findByName(String productName);
+    List<Product> findByNameIgnoreCaseContaining(String productName);
 
     Long countByManufacturerAndName(String manufacturer, String name);
 

@@ -115,11 +115,11 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<Product> getProductsByManufacturer(String manufacturer) {
-        return productRepository.findByManufacturer(manufacturer);
+        return productRepository.findByManufacturerIgnoreCaseContaining(manufacturer);
     }
 
     @Override
     public List<Product> getProductsByName(String productName) {
-        return productRepository.findByName(productName);
+        return productRepository.findByNameIgnoreCaseContaining(productName);
     }
 }
