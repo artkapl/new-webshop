@@ -61,7 +61,7 @@ public class ImageServiceImpl implements ImageService {
                 imageRepository.save(savedImage);
 
                 // Make ImageDto to return file name and url
-                ImageDto imageDto = getImageDto(savedImage);
+                ImageDto imageDto = createImageDto(savedImage);
                 imageDtos.add(imageDto);
 
             } catch (IOException | SQLException e) {
@@ -71,7 +71,7 @@ public class ImageServiceImpl implements ImageService {
         return imageDtos;
     }
 
-    private ImageDto getImageDto(Image savedImage) {
+    private ImageDto createImageDto(Image savedImage) {
         ImageDto imageDto = new ImageDto();
         imageDto.setFileName(savedImage.getFileName());
         imageDto.setImageId(savedImage.getId());
