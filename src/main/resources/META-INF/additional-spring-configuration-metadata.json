@@ -1,5 +1,17 @@
-{"properties": [{
-  "name": "api.url.prefix",
-  "type": "java.lang.String",
-  "description": "A standard API prefix URL for every controller route."
-}]}
+{"properties": [
+  {
+    "name": "api.url.prefix",
+    "type": "java.lang.String",
+    "description": "A standard API prefix URL for every controller route."
+  },
+  {
+    "name": "upload.directory",
+    "type": "java.lang.String",
+    "description": "Upload directory for files, e.g. product images."
+  },
+  {
+    "name": "server.url",
+    "type": "java.lang.String",
+    "description": "Server base url"
+  }
+]}

@@ -2,12 +2,16 @@ package com.artkapl.new_webshop.controller;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
-import java.sql.SQLException;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.http.HttpHeaders;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,24 +42,41 @@ public class ImageController {
     @Autowired
     private ImageService imageService;
 
+    @Value("${upload.directory}")
+    private String uploadDir;
+
     @PostMapping("/product/{productId}")  
     public ResponseEntity<ApiResponse> saveImages(@RequestParam List<MultipartFile> files, @PathVariable Long productId) {
         try {
-            List<ImageDto> imageDtos = imageService.saveImages(files, productId);
+            List<ImageDto> imageDtos = imageService.saveImages(files, productId, uploadDir);
             return ResponseEntity.ok(new ApiResponse("Image(s) saved!", imageDtos));
         } catch (Exception e) {
             return ControllerTools.getInternalErrorResponse(e);
         }
     }
 
-    @GetMapping("/{imageId}")
-    public ResponseEntity<org.springframework.core.io.Resource> downloadImage(@PathVariable Long imageId) throws SQLException {
+    @GetMapping("/download/{imageId}")
+    public ResponseEntity<Resource> downloadImage(@PathVariable Long imageId) throws IOException {
         Image image = imageService.getImageById(imageId);
-        ByteArrayResource resource = new ByteArrayResource(image.getImageData().getBytes(0, (int) image.getImageData().length()));
-        return ResponseEntity.ok()
-            .contentType(MediaType.parseMediaType(image.getFileType()))
-            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + image.getFileName() + "\"")
-            .body(resource);
+
+        Path filePath = Paths.get(uploadDir).resolve(String.valueOf(image.getProduct().getId())).resolve(image.getImageUrl().substring(image.getImageUrl().lastIndexOf("/") + 1));
+
+        // Check if the file exists
+        if (!filePath.toFile().exists()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+
+        // Load the file as a resource
+        Resource resource = new UrlResource(filePath.toUri());
+
+        if (resource.exists() || resource.isReadable()) {
+            // Return the image inline
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType(image.getFileType()))
+                    .body(resource);
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @PutMapping("/{imageId}")

@@ -31,10 +31,9 @@ public class Image {
     @NotBlank
     private String fileType;
 
-    @Lob
-    private Blob imageData;
+    // @Lob
+    // private Blob imageData;
 
-    @NotBlank
     private String imageUrl;
 
     @ManyToOne
