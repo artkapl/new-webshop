@@ -49,9 +49,7 @@ public class ImageServiceImpl implements ImageService {
     @SuppressWarnings("null")
     @Override
     public List<ImageDto> saveImages(List<MultipartFile> imageFiles, Long productId, String uploadDir) throws IOException, SerialException, SQLException {
-        Path rootDir = Paths.get("").toAbsolutePath();  // Project root directory
-        // Resolve the directory path where files will be saved
-        Path productDir = rootDir.resolve(uploadDir).resolve(String.valueOf(productId));
+        Path productDir = getProductDir(productId, uploadDir);
         // Ensure the product-specific directory exists
         if (!Files.exists(productDir)) {
             Files.createDirectories(productDir);
@@ -65,12 +63,7 @@ public class ImageServiceImpl implements ImageService {
                 throw new IllegalArgumentException("Only image files are allowed.");
             }
 
-            // Resolve the file path where the image will be stored
-            String newFilename = System.currentTimeMillis() + "_" + productId + "_" + file.getOriginalFilename();
-            Path filePath = productDir.resolve(newFilename);
-
-            // Save the file to the specified directory
-            file.transferTo(filePath.toFile());
+            String newFilename = saveImageAndGetFilePath(productId, productDir, file);
 
             Image image = createImage(file);
             image.setProduct(product);
@@ -88,6 +81,23 @@ public class ImageServiceImpl implements ImageService {
         return imageDtos;
     }
 
+    private Path getProductDir(Long productId, String uploadDir) {
+        Path rootDir = Paths.get("").toAbsolutePath();  // Project root directory
+        // Resolve the directory path where files will be saved
+        Path productDir = rootDir.resolve(uploadDir).resolve(String.valueOf(productId));
+        return productDir;
+    }
+
+    private String saveImageAndGetFilePath(Long productId, Path productDir, MultipartFile file) throws IOException {
+        // Resolve the file path where the image will be stored
+        String newFilename = System.currentTimeMillis() + "_" + productId + "_" + file.getOriginalFilename();
+        Path filePath = productDir.resolve(newFilename);
+
+        // Save the file to the specified directory
+        file.transferTo(filePath.toFile());
+        return newFilename;
+    }
+
     private ImageDto createImageDto(Image savedImage) {
         ImageDto imageDto = new ImageDto();
         imageDto.setFileName(savedImage.getFileName());
@@ -103,16 +113,35 @@ public class ImageServiceImpl implements ImageService {
         return image;
     }
 
-    @Override  // TODO: fix update image
-    public Image updateImage(MultipartFile imageFile, Long imageId) {
+    @Override
+    public Image updateImage(MultipartFile imageFile, Long productId, Long imageId, String uploadDir) {
         Image image = getImageById(imageId);
         try {
-            image.setFileName(imageFile.getName());
-            image.setFileType(imageFile.getContentType());
+            // delete old image
+            String filePath = Paths.get(uploadDir)
+                .resolve(String.valueOf(image.getProduct().getId()))
+                .resolve(image.getImageUrl()
+                .substring(image.getImageUrl().lastIndexOf("/") + 1)).toString();
+            deleteImageFromDisk(filePath);
+
+            // save new image on disk and in DB
+            List<MultipartFile> images = new ArrayList<>();
+            images.add(imageFile);
+            saveImages(images, productId, uploadDir);
+
+            // remove product link from old image
+            image.setProduct(null);
+            imageRepository.save(image);
+
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
         return image;
+    }
+
+    public void deleteImageFromDisk(String filePath) throws IOException {
+        Path path = Paths.get(filePath);
+        Files.deleteIfExists(path);
     }
 
 }

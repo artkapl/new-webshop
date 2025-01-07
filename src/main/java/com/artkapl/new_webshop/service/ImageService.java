@@ -15,5 +15,6 @@ public interface ImageService {
     Image getImageById(Long id);
     void deleteImage(Long id);
     List<ImageDto> saveImages(List<MultipartFile> imageFiles, Long productId, String uploadDir) throws IOException, SerialException, SQLException;
-    Image updateImage(MultipartFile imageFile, Long imageId);
+    Image updateImage(MultipartFile imageFile, Long productId, Long imageId, String uploadDir);
+    void deleteImageFromDisk(String filePath) throws IOException;
 }
