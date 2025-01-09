@@ -57,24 +57,30 @@ public class ImageController {
 
     @GetMapping("/download/{imageId}")
     public ResponseEntity<Resource> downloadImage(@PathVariable Long imageId) throws IOException {
-        Image image = imageService.getImageById(imageId);
+        try {
+            Image image = imageService.getImageById(imageId);
 
-        Path filePath = Paths.get(uploadDir).resolve(String.valueOf(image.getProduct().getId())).resolve(image.getImageUrl().substring(image.getImageUrl().lastIndexOf("/") + 1));
-
-        // Check if the file exists
-        if (!filePath.toFile().exists()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
-
-        // Load the file as a resource
-        Resource resource = new UrlResource(filePath.toUri());
-
-        if (resource.exists() || resource.isReadable()) {
-            // Return the image inline
-            return ResponseEntity.ok()
-                    .contentType(MediaType.parseMediaType(image.getFileType()))
-                    .body(resource);
-        } else {
+            Path filePath = Paths.get(uploadDir).resolve(String.valueOf(image.getProduct().getId())).resolve(image.getImageUrl().substring(image.getImageUrl().lastIndexOf("/") + 1));
+    
+            // Check if the file exists
+            if (!filePath.toFile().exists()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            }
+    
+            // Load the file as a resource
+            Resource resource = new UrlResource(filePath.toUri());
+    
+            if (resource.exists() || resource.isReadable()) {
+                // Return the image inline
+                return ResponseEntity.ok()
+                        .contentType(MediaType.parseMediaType(image.getFileType()))
+                        .body(resource);
+            } else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            }
+        } catch (NotFoundException e) {
+            return ResponseEntity.status(NOT_FOUND).build();
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
@@ -82,8 +88,8 @@ public class ImageController {
     @PutMapping("/product/{productId}/image/{imageId}")
     public ResponseEntity<ApiResponse> updateImage(@PathVariable Long productId, @PathVariable Long imageId, @RequestBody MultipartFile file) {
         try {
-            imageService.updateImage(file, productId, imageId, uploadDir);
-            return ResponseEntity.ok(new ApiResponse("Image updated!", null));
+            List<ImageDto> imageDtos = imageService.updateImage(file, productId, imageId, uploadDir);
+            return ResponseEntity.ok(new ApiResponse("Image updated!", imageDtos));
         } catch (NotFoundException e) {
             return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
         } catch (Exception e) {

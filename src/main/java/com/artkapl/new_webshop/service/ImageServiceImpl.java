@@ -46,7 +46,6 @@ public class ImageServiceImpl implements ImageService {
                 });
     }
 
-    @SuppressWarnings("null")
     @Override
     public List<ImageDto> saveImages(List<MultipartFile> imageFiles, Long productId, String uploadDir) throws IOException, SerialException, SQLException {
         Path productDir = getProductDir(productId, uploadDir);
@@ -58,10 +57,7 @@ public class ImageServiceImpl implements ImageService {
         Product product = productService.getProductById(productId);
         List<ImageDto> imageDtos = new ArrayList<>();
         for (MultipartFile file : imageFiles) {
-            // Ensure the file is an image (optional, but good practice)
-            if (!file.getContentType().startsWith("image/")) {
-                throw new IllegalArgumentException("Only image files are allowed.");
-            }
+            checkIsImageFile(file);
 
             String newFilename = saveImageAndGetFilePath(productId, productDir, file);
 
@@ -79,6 +75,14 @@ public class ImageServiceImpl implements ImageService {
             imageDtos.add(imageDto);
         }
         return imageDtos;
+    }
+
+    @SuppressWarnings("null")
+    private void checkIsImageFile(MultipartFile file) {
+        // Ensure the file is an image (optional, but good practice)
+        if (file == null || !file.getContentType().startsWith("image/")) {
+            throw new IllegalArgumentException("Only image files are allowed.");
+        }
     }
 
     private Path getProductDir(Long productId, String uploadDir) {
@@ -114,9 +118,12 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    public Image updateImage(MultipartFile imageFile, Long productId, Long imageId, String uploadDir) {
+    public List<ImageDto> updateImage(MultipartFile imageFile, Long productId, Long imageId, String uploadDir) {
         Image image = getImageById(imageId);
+        List<ImageDto> newImageDtos = new ArrayList<>();
         try {
+            checkIsImageFile(imageFile);  // verify new imageFile
+
             // delete old image
             String filePath = Paths.get(uploadDir)
                 .resolve(String.valueOf(image.getProduct().getId()))
@@ -127,16 +134,16 @@ public class ImageServiceImpl implements ImageService {
             // save new image on disk and in DB
             List<MultipartFile> images = new ArrayList<>();
             images.add(imageFile);
-            saveImages(images, productId, uploadDir);
+            newImageDtos = saveImages(images, productId, uploadDir);
 
-            // remove product link from old image
-            image.setProduct(null);
+            // mark image as orphaned for cleanup scheduler
+            image.setOrphaned(true);
             imageRepository.save(image);
 
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
-        return image;
+        return newImageDtos;
     }
 
     public void deleteImageFromDisk(String filePath) throws IOException {

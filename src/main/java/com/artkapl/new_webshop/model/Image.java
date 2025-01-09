@@ -30,6 +30,8 @@ public class Image {
 
     private String imageUrl;
 
+    private boolean isOrphaned;
+
     @ManyToOne
     @JoinColumn(name = "product_id")
     private Product product;

@@ -26,7 +26,7 @@ public class ImageCleanupService {
 
     @Scheduled(fixedRate = 24 * 60 * 60 * 1000)  // every 24 hours
     public void cleanOrphanedImages() throws IOException {
-        List<Image> orphanedImages = imageRepository.findByProductIsNull();
+        List<Image> orphanedImages = imageRepository.findByIsOrphaned(true);
 
         for (Image image : orphanedImages) {
             String filePath = Paths.get(uploadDir)
@@ -34,7 +34,9 @@ public class ImageCleanupService {
                 .resolve(image.getImageUrl()
                 .substring(image.getImageUrl().lastIndexOf("/") + 1)).toString();
             
-            imageService.deleteImageFromDisk(filePath);  // delete image from disk
+            if (filePath != null) {
+                imageService.deleteImageFromDisk(filePath);  // delete image from disk
+            }
             imageRepository.delete(image);  // delete image from DB
         }
     }
