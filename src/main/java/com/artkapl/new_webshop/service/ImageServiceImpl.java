@@ -40,10 +40,7 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     public void deleteImage(Long id) {
-        imageRepository.findById(id).ifPresentOrElse(imageRepository::delete,
-                () -> {
-                    throw new NotFoundException("Image not found!");
-                });
+        imageRepository.findById(id).ifPresentOrElse(imageRepository::delete, () -> {throw new NotFoundException("Image not found!");});
     }
 
     @Override
@@ -105,7 +102,7 @@ public class ImageServiceImpl implements ImageService {
     private ImageDto createImageDto(Image savedImage) {
         ImageDto imageDto = new ImageDto();
         imageDto.setFileName(savedImage.getFileName());
-        imageDto.setImageId(savedImage.getId());
+        imageDto.setId(savedImage.getId());
         imageDto.setImageUrl(savedImage.getImageUrl());
         return imageDto;
     }
