@@ -34,7 +34,7 @@ public class ImageCleanupService {
                 .resolve(image.getImageUrl()
                 .substring(image.getImageUrl().lastIndexOf("/") + 1)).toString();
             
-            if (filePath != null) {
+            if (filePath != null) {  // todo: find out why image not deleted... can't find path?
                 imageService.deleteImageFromDisk(filePath);  // delete image from disk
             }
             imageRepository.delete(image);  // delete image from DB
