@@ -37,7 +37,8 @@ public class CartItem {
     private Product product;
 
     public void setTotalPrice() {
-        this.totalPrice = this.getUnitPrice().multiply(new BigDecimal(quantity));
+        boolean noPriceOrQty = this.quantity == 0 || this.unitPrice == null;
+        this.totalPrice = noPriceOrQty ? BigDecimal.ZERO : this.getUnitPrice().multiply(new BigDecimal(quantity));
     }
 
 }
